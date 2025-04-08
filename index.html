@@ -6,11 +6,20 @@
   <meta name="description" content="صفحة قبيلة ترْكَز، إرث العراقة والإبداع الخيالي">
   <title>قبيلة ترْكَز | إرث العراقة والإبداع الخيالي</title>
   <!-- استيراد الخطوط -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Reem+Kufi:wght@400;700&display=swap" rel="stylesheet">
   <!-- ربط ملف CSS الخارجي -->
   <link rel="stylesheet" href="style.css">
+  <!-- إضافة أيقونات Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+  <!-- شريط التقدم -->
+  <div class="progress-container">
+    <div class="progress-bar" id="scrollIndicator"></div>
+  </div>
+
   <!-- خلفية الجزيئات المتحركة -->
   <canvas id="particles-canvas"></canvas>
   
@@ -19,7 +28,7 @@
     <div class="container header-content">
       <a href="#" class="logo">ترْكَز</a>
       <!-- زر الهامبرغر للأجهزة المحمولة -->
-      <button class="menu-toggle" id="menuToggle">&#9776;</button>
+      <button class="menu-toggle" id="menuToggle" aria-label="افتح القائمة">&#9776;</button>
       <nav class="nav" id="navMenu">
         <a class="nav-link" href="#intro">المقدمة التاريخية</a>
         <a class="nav-link" href="#map">الخريطة</a>
@@ -28,14 +37,30 @@
         <a class="nav-link" href="#personalities">الشخصيات</a>
         <a class="nav-link" href="#" id="openModal">المميزات الفاخرة</a>
       </nav>
+      <!-- زر البحث -->
+      <button id="searchButton" class="search-button" aria-label="البحث"><i class="fas fa-search"></i></button>
     </div>
   </header>
+
+  <!-- نموذج البحث -->
+  <div id="searchModal" class="search-modal">
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="ابحث في المحتوى..." aria-label="بحث">
+      <button id="closeSearch" aria-label="إغلاق"><i class="fas fa-times"></i></button>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </div>
   
   <!-- قسم البطل (Hero) -->
   <section class="hero parallax">
     <h1 class="hero-title">ترْكَز: إرثٌ خيالي وإبداعٌ لا يُضاهى</h1>
     <p class="hero-subtitle">من أعماق التاريخ إلى عالم الأحلام.. رحلة عبر الزمان والمكان</p>
-    <a href="#intro" class="btn">اكتشف التاريخ</a>
+    <div class="hero-buttons">
+      <a href="#intro" class="btn">اكتشف التاريخ</a>
+      <button id="playPauseMusic" class="btn btn-outline" aria-label="تشغيل/إيقاف الموسيقى">
+        <i class="fas fa-music"></i> <span id="musicStatus">تشغيل الموسيقى</span>
+      </button>
+    </div>
   </section>
   
   <div class="marquee-container">
@@ -52,9 +77,12 @@
         <p class="history-text">
           تأسست قبيلة ترْكَز على أسس تاريخية متجذرة في عمق الحضارة؛ حيث يعود نسبها إلى عبد الرحمان بن أبي بكر الملقب بـ"عبد الرحمان الركاز أو الركاظ".
         </p>
-        <p class="history-text">
-          "عبد الرحمان بن أبي بكر بن عبد الله بن سيدي سالم بن سيدي إبراهيم بن سيدي عثمان بن سيدي عبد الله بن سيدي جعفر بن سيدي سالم بن عبد الرحمان بن حبيب بن عبيدة بن عقبة بن نافع بن عبد القيس بن لقيط بن عامر بن أمية بن الظرب بن أمية بن الحارث بن فهر بن مالك بن النضر (قريش) بن كنانة بن خزيمة بن مدركة بن إلياس بن مضر بن نزار بن معد بن عدنان."
-        </p>
+        <div class="collapsible-content">
+          <p class="history-text truncated" id="history-full">
+            "عبد الرحمان بن أبي بكر بن عبد الله بن سيدي سالم بن سيدي إبراهيم بن سيدي عثمان بن سيدي عبد الله بن سيدي جعفر بن سيدي سالم بن عبد الرحمان بن حبيب بن عبيدة بن عقبة بن نافع بن عبد القيس بن لقيط بن عامر بن أمية بن الظرب بن أمية بن الحارث بن فهر بن مالك بن النضر (قريش) بن كنانة بن خزيمة بن مدركة بن إلياس بن مضر بن نزار بن معد بن عدنان."
+          </p>
+          <button class="read-more-btn" id="history-read-more" aria-expanded="false" aria-controls="history-full">قراءة المزيد</button>
+        </div>
       </div>
     </div>
   </section>
@@ -64,7 +92,7 @@
     <div class="container">
       <h2 class="section-title">خريطة القبيلة والمنطقة الجغرافية</h2>
       <div class="map-container" style="position: relative; border: 4px solid var(--color-gold); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);">
-        <img src="Asset 1.png" alt="خريطة القبيلة" style="width: 100%; height: auto; display: block;">
+        <img src="Asset 1.png" alt="خريطة القبيلة" style="width: 100%; height: auto; display: block;" loading="lazy">
       </div>
     </div>
   </section>
@@ -105,18 +133,20 @@
       <h2 class="section-title">الرواية التاريخية والنضال</h2>
       <div class="story-content">
         <p class="story-text">
-            لما عزم أبوبكر بن عامر على الخروج راود قوما على الخروج معه من نسل عقبة المستجاب تبركا بهم وهم أربعة رجال: محمد بن عبد الله جدّ مدلش وابن أخيه عبد الرحمن بن أبي بكر جدّ تركز وسيد محمد الكنتي جدّ كنته وعبد الله جدّ إدغزينب". قلت وفي هذا النسب بعض مخالفة لما مر في تاريخ الشيخ سيدية بابه والذي تقدم أحق وأصدق والله أعلم وسار بالرجال الأربعة في جيشه ومعه كثير من ملوك لمتونة الذين قال فيهم ابن الخطيب:        </p>
+          لما عزم أبوبكر بن عامر على الخروج راود قوما على الخروج معه من نسل عقبة المستجاب تبركا بهم وهم أربعة رجال:
+        </p>
         <ul class="story-text">
           <li>محمد بن عبد الله (جدّ مدلش)</li>
           <li>عبد الرحمن بن أبي بكر (جدّ تركز)</li>
           <li>سيد محمد الكنتي (جدّ كنته)</li>
           <li>عبد الله (جدّ إدغزينب)</li>
         </ul>
-        <p class="story-text">
-            قد طلعت بمغرب لمتونة في دولة عزيزة ميمونه.
-            تجمع ديننا وعفافا وكرم لم يدر قوم فضلها حتى انصرم.
-            منهم أبو بكر حليف الدين ويوسف هو ابن تاشفين.
-            فلما وصل الجيش جبل لحمادة في أرض الساقية بات ولا ماء معه فصارت فارس الولي عبد الرحمن بن أبي بكر تنبش الأرض بيدها وتصهل فضرب عبد الرحمن موضع حافرها بقوسه فتفجر الماء من ذلك فسمي الركاز وسمي الماء بالفرصية. وهي منطقة قرب الحمادات.        </p>
+        <div class="collapsible-content">
+          <p class="story-text truncated" id="story-full">
+            قلت وفي هذا النسب بعض مخالفة لما مر في تاريخ الشيخ سيدية بابه والذي تقدم أحق وأصدق والله أعلم وسار بالرجال الأربعة في جيشه ومعه كثير من ملوك لمتونة الذين قال فيهم ابن الخطيب: قد طلعت بمغرب لمتونة في دولة عزيزة ميمونه. تجمع ديننا وعفافا وكرم لم يدر قوم فضلها حتى انصرم. منهم أبو بكر حليف الدين ويوسف هو ابن تاشفين. فلما وصل الجيش جبل لحمادة في أرض الساقية بات ولا ماء معه فصارت فارس الولي عبد الرحمن بن أبي بكر تنبش الأرض بيدها وتصهل فضرب عبد الرحمن موضع حافرها بقوسه فتفجر الماء من ذلك فسمي الركاز وسمي الماء بالفرصية. وهي منطقة قرب الحمادات.
+          </p>
+          <button class="read-more-btn" id="story-read-more" aria-expanded="false" aria-controls="story-full">قراءة المزيد</button>
+        </div>
       </div>
     </div>
   </section>
@@ -127,13 +157,14 @@
       <h2 class="section-title">تصنيف القبيلة والدور الثقافي والديني</h2>
       <div class="history-content">
         <p class="history-text">
-            تصنف تركز كإحدى قبائل الزوايا وتطلق كلمة الزوايا إصطلاحا في الثقافة البيظانية على مجموع القبائل المهتمة بالعلم ونشره، فهم حملة العلم والدين بالبلاد قاطبة، وقال فيهم الشيخ بابا بن الشيخ سيديا الإبيري «أنهم سموا بهذا الاسم لملازمتهم الزاوية، وهي موضع العبادة» وأورد محمد محمود بن محمد سالم المدلشي تعريفا تاريخيا لهم إذ قال «أنه على عهد المرابطين كانت هناك فئة من المجتمع تنقطع للعبادة والعلم وأنهم كانوا يلزمون الزاوية، وأن منهم أجداد قبائل الزوايا في بلاد القبلة».
-
-            و قد خاضت تركز عدة حروب مع عدة قبائل كالسماسيد وأيت اوسى واولاد جرار وغيرهم.
-            
-            و لعل هاته الحروب يعود أساسها إلى التزاحم بين هاته القبائل في المرعى ومصادر المياه وطرق التجارة واسباب أخرى، لكن هاته الحروب وغيرها لم تسئ إلى مفهوم الزاوي إطلاقا، إذ ظل مفهوم الزاوي يدل على التدين والورع والزهد، وأهم شيء قدمته قبائل الزوايا لمجتمع البيظان هو إنعاش الحياة العلمية والثقافية بالبلاد، فأنجبت لنا قبائل الزوايا علماء أثبتوا مع الوقت أنهم بلغوا من الرسوخ في العلم ما أهلهم لأن يدرسوا ويفتوا في جامع الأزهر والزيتونة والقرويين، بل لجأ السلطان العثماني في أواسط القرن ال 19 إلى استخدام مستشار في المجال الثقافي من أصل بيظاني وهو «سيدي محمد محمود بن التلاميذ التركزي» الذي أوفده في سفارة مشهورة إلى إيطاليا وإسبانبا وفرنسا.        </p>
-        <p class="history-text">
+          تصنف تركز كإحدى قبائل الزوايا وتطلق كلمة الزوايا إصطلاحا في الثقافة البيظانية على مجموع القبائل المهتمة بالعلم ونشره، فهم حملة العلم والدين بالبلاد قاطبة.
         </p>
+        <div class="collapsible-content">
+          <p class="history-text truncated" id="cultural-full">
+            وقال فيهم الشيخ بابا بن الشيخ سيديا الإبيري «أنهم سموا بهذا الاسم لملازمتهم الزاوية، وهي موضع العبادة» وأورد محمد محمود بن محمد سالم المدلشي تعريفا تاريخيا لهم إذ قال «أنه على عهد المرابطين كانت هناك فئة من المجتمع تنقطع للعبادة والعلم وأنهم كانوا يلزمون الزاوية، وأن منهم أجداد قبائل الزوايا في بلاد القبلة». و قد خاضت تركز عدة حروب مع عدة قبائل كالسماسيد وأيت اوسى واولاد جرار وغيرهم. و لعل هاته الحروب يعود أساسها إلى التزاحم بين هاته القبائل في المرعى ومصادر المياه وطرق التجارة واسباب أخرى، لكن هاته الحروب وغيرها لم تسئ إلى مفهوم الزاوي إطلاقا، إذ ظل مفهوم الزاوي يدل على التدين والورع والزهد، وأهم شيء قدمته قبائل الزوايا لمجتمع البيظان هو إنعاش الحياة العلمية والثقافية بالبلاد، فأنجبت لنا قبائل الزوايا علماء أثبتوا مع الوقت أنهم بلغوا من الرسوخ في العلم ما أهلهم لأن يدرسوا ويفتوا في جامع الأزهر والزيتونة والقرويين، بل لجأ السلطان العثماني في أواسط القرن ال 19 إلى استخدام مستشار في المجال الثقافي من أصل بيظاني وهو «سيدي محمد محمود بن التلاميذ التركزي» الذي أوفده في سفارة مشهورة إلى إيطاليا وإسبانبا وفرنسا.
+          </p>
+          <button class="read-more-btn" id="cultural-read-more" aria-expanded="false" aria-controls="cultural-full">قراءة المزيد</button>
+        </div>
       </div>
     </div>
   </section>
@@ -144,46 +175,90 @@
       <h2 class="section-title">أشهر الآعلام والعلماء</h2>
       <div class="personalities-grid">
         <div class="personality-card">
-          <img class="personality-img" src="0.jpeg" alt="الشخصية: محمد محمود ولد التلاميد التركزي الشنقيطي">
+          <img class="personality-img" src="0.jpeg" alt="الشخصية: محمد محمود ولد التلاميد التركزي الشنقيطي" loading="lazy">
           <div class="personality-content">
             <h3 class="personality-name">محمد محمود ولد التلاميد التركزي الشنقيطي</h3>
             <p class="personality-title">المصحح واللغة الرفيعة</p>
             <p class="personality-desc">أحد أعلام التراث الثقافي واللغوي، رمز للإبداع والعراقة.</p>
+            <div class="social-share">
+              <button class="share-btn" data-name="محمد محمود ولد التلاميد التركزي الشنقيطي" aria-label="مشاركة">
+                <i class="fas fa-share-alt"></i>
+              </button>
+            </div>
           </div>
         </div>
         <div class="personality-card">
-          <img class="personality-img" src="1.jpeg" alt="الشخصية: الشيخ لمرابط السيدي ولد سيد الأمين">
+          <img class="personality-img" src="1.jpeg" alt="الشخصية: الشيخ لمرابط السيدي ولد سيد الأمين" loading="lazy">
           <div class="personality-content">
             <h3 class="personality-name">الشيخ لمرابط السيدي ولد سيد الأمين</h3>
             <p class="personality-title">المرجع الديني</p>
             <p class="personality-desc">شخصية بارزة في المجال الديني تجمع بين الحكمة والروحانية.</p>
+            <div class="social-share">
+              <button class="share-btn" data-name="الشيخ لمرابط السيدي ولد سيد الأمين" aria-label="مشاركة">
+                <i class="fas fa-share-alt"></i>
+              </button>
+            </div>
           </div>
         </div>
         <div class="personality-card">
-          <img class="personality-img" src="2.jpeg" alt="الشخصية: الولي الصالح ابن الأولياء">
+          <img class="personality-img" src="2.jpeg" alt="الشخصية: الولي الصالح ابن الأولياء" loading="lazy">
           <div class="personality-content">
             <h3 class="personality-name">الولي الصالح ابن الأولياء</h3>
             <p class="personality-title">الروحاني والناصح</p>
             <p class="personality-desc">شخصية متألقة في الميدان الروحي تجمع بين العلم والتقوى.</p>
+            <div class="social-share">
+              <button class="share-btn" data-name="الولي الصالح ابن الأولياء" aria-label="مشاركة">
+                <i class="fas fa-share-alt"></i>
+              </button>
+            </div>
           </div>
         </div>
         <div class="personality-card">
-          <img class="personality-img" src="3.jpeg" alt="الشخصية: أبو الأولياء لمرابط عبد الفتاح">
+          <img class="personality-img" src="3.jpeg" alt="الشخصية: أبو الأولياء لمرابط عبد الفتاح" loading="lazy">
           <div class="personality-content">
             <h3 class="personality-name">أبو الأولياء لمرابط عبد الفتاح</h3>
             <p class="personality-title">الرمز التاريخي</p>
             <p class="personality-desc">تجسيد حي للتراث والبطولة، مصدر إلهام للأجيال.</p>
+            <div class="social-share">
+              <button class="share-btn" data-name="أبو الأولياء لمرابط عبد الفتاح" aria-label="مشاركة">
+                <i class="fas fa-share-alt"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
   
+  <!-- زر العودة للأعلى -->
+  <button id="backToTop" class="back-to-top" aria-label="العودة إلى الأعلى">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+  
   <!-- التذييل -->
   <footer class="footer">
     <div class="container">
-      <p>حقوق النشر © 2025 قبيلة ترْكَز. جميع الحقوق محفوظة.</p>
-      <p>المصدر: ويكيميديا | © خريطة الشارع المفتوحة</p>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>تواصل معنا</h3>
+          <div class="social-icons">
+            <a href="#" aria-label="فيسبوك"><i class="fab fa-facebook"></i></a>
+            <a href="#" aria-label="تويتر"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="انستغرام"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="يوتيوب"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h3>روابط مهمة</h3>
+          <a href="#intro">المقدمة التاريخية</a>
+          <a href="#map">الخريطة</a>
+          <a href="#divisions">البطون والأعراش</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>حقوق النشر © 2025 قبيلة ترْكَز. جميع الحقوق محفوظة.</p>
+        <p>المصدر: ويكيميديا | © خريطة الشارع المفتوحة</p>
+      </div>
     </div>
   </footer>
   
@@ -199,6 +274,22 @@
         <li>مؤشر مخصص فاخر مع تأثيرات ضوئية أنيقة.</li>
         <li>نافذة منبثقة تفاعلية لعرض معلومات أو مقاطع فيديو إضافية.</li>
       </ul>
+    </div>
+  </div>
+
+  <!-- نافذة المشاركة -->
+  <div id="shareModal" class="modal">
+    <div class="modal-content share-modal-content">
+      <span class="close-btn" id="closeShareModal" aria-label="إغلاق">&times;</span>
+      <h2 id="shareTitle">مشاركة المعلومات</h2>
+      <p id="shareText"></p>
+      <div class="share-buttons">
+        <button class="share-platform" data-platform="facebook"><i class="fab fa-facebook"></i> فيسبوك</button>
+        <button class="share-platform" data-platform="twitter"><i class="fab fa-twitter"></i> تويتر</button>
+        <button class="share-platform" data-platform="whatsapp"><i class="fab fa-whatsapp"></i> واتساب</button>
+        <button class="share-platform" data-platform="telegram"><i class="fab fa-telegram"></i> تلغرام</button>
+        <button class="share-platform" data-platform="email"><i class="fas fa-envelope"></i> بريد إلكتروني</button>
+      </div>
     </div>
   </div>
   
